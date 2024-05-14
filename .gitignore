@@ -1,0 +1,8 @@
+.venv
+.vscode
+.pytest_cache
+output
+otel-output.json
+__pycache__
+plugins
+playbook.yml
