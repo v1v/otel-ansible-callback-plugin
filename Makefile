@@ -26,3 +26,11 @@ run-test:
 unit:
 	source $(VENV)/bin/activate; \
 	$(PYTHON) -m pytest --capture=no --junitxml $(JUNIT_OUTPUT) test_pytest.py
+
+## @help:test-it:Run the generated playbook in ITs.
+.PHONY: test-it
+test-it:
+	source $(VENV)/bin/activate; \
+	OTEL_EXPORTER_OTLP_INSECURE=true \
+	OTEL_EXPORTER_OTLP_ENDPOINT=localhost:4317 \
+	ansible-playbook playbook.yml

@@ -55,3 +55,34 @@ def test_basic_playbook():
         if span["name"] == playbook:
             foundTestSuite = assertPlaybook(span)
     assert True
+
+
+def test_playbook_with_long_output():
+    """test a basic playbook"""
+
+    playbook = "playbook.yml"
+    ## Given a playbook
+    with open(playbook, 'w', encoding="utf-8") as f:
+        f.write("""---
+- name: playbook
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: Get build data
+      ansible.builtin.uri:
+        url: "https://artifacts-api.elastic.co/v1/versions"
+        validate_certs: no
+""")
+
+    ## When running the ansible playbook with the plugin
+    p = subprocess.Popen('make run-test', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    retval = p.wait()
+    span_list = get_spans()
+
+    ## Then
+    for span in span_list:
+        if span["name"] == "Gathering Facts":
+            foundTestSuite = assertGatheringFacts(span)
+        if span["name"] == playbook:
+            foundTestSuite = assertPlaybook(span)
+    assert True
