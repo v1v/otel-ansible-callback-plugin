@@ -6,7 +6,7 @@ import subprocess
 def get_spans():
     span_list = None
     with open("otel-output.json", encoding="utf-8") as input:
-        span_list = json.loads(input.read())
+        span_list = json.loads(input.read())['spans']
     return span_list
 
 
