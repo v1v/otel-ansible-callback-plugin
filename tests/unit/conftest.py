@@ -16,6 +16,13 @@ class Helpers:
         p = subprocess.Popen('ANSIBLE_OPENTELEMETRY_DISABLE_ATTRIBUTES_IN_LOGS=true make run-test', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         retval = p.wait()
         return Helpers.get_spans()
+
+
+    @staticmethod
+    def run_ansible_hide_arguments():
+        p = subprocess.Popen('ANSIBLE_OPENTELEMETRY_HIDE_TASK_ARGUMENTS=true make run-test', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        retval = p.wait()
+        return Helpers.get_spans()
     
 
     @staticmethod

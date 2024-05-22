@@ -28,6 +28,8 @@ def test_basic_playbook(helpers):
             helpers.assertCommonSpan(span)
             assert span["attributes"]["ansible.task.module"] == "debug"
             assert len(span["events"]) == 1
+            assert len(span["attributes"]["ansible.task.args.name"]) == 1
+            assert len(span["attributes"]["ansible.task.args.value"]) == 1
         if span["name"] == playbook:
             helpers.assertPlaybook(span)
     assert len(span_list) == 3
@@ -61,6 +63,8 @@ def test_playbook_with_long_output(helpers):
             helpers.assertCommonSpan(span)
             assert span["attributes"]["ansible.task.module"] == "ansible.builtin.uri"
             assert len(span["events"]) == 1
+            assert len(span["attributes"]["ansible.task.args.name"]) == 2
+            assert len(span["attributes"]["ansible.task.args.value"]) == 2
         if span["name"] == playbook:
             helpers.assertPlaybook(span)
     assert len(span_list) == 3

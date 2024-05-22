@@ -18,7 +18,7 @@ def test_basic_playbook(helpers):
 """)
 
     ## When running the ansible playbook with the plugin
-    span_list = helpers.run_ansible_no_logs()
+    span_list = helpers.run_ansible_hide_arguments()
     
     ## Then
     for span in span_list:
@@ -27,9 +27,9 @@ def test_basic_playbook(helpers):
         if span["name"] == "hello world":
             helpers.assertCommonSpan(span)
             assert span["attributes"]["ansible.task.module"] == "debug"
+            assert "ansible.task.args.name" not in span["attributes"]
+            assert "ansible.task.args.value" not in span["attributes"]
             assert len(span["events"]) == 1
-            assert len(span["attributes"]["ansible.task.args.name"]) == 1
-            assert len(span["attributes"]["ansible.task.args.value"]) == 1
         if span["name"] == playbook:
             helpers.assertPlaybook(span)
     assert len(span_list) == 3
