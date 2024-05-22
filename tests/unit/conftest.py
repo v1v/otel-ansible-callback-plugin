@@ -26,6 +26,13 @@ class Helpers:
     
 
     @staticmethod
+    def run_ansible_traceparent():
+        p = subprocess.Popen('TRACEPARENT=00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01 make run-test', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        retval = p.wait()
+        return Helpers.get_spans()
+
+
+    @staticmethod
     def get_spans():
         span_list = None
         with open("otel-output.json", encoding="utf-8") as input:
@@ -34,25 +41,25 @@ class Helpers:
 
 
     @staticmethod
-    def assertCommonSpan(span):
+    def assertCommonSpan(span, service = 'ansible'):
         assert span["kind"] == "SpanKind.INTERNAL"
-        assert span["resource"]["attributes"]["service.name"] == "ansible"
+        assert span["resource"]["attributes"]["service.name"] == service
         assert span["attributes"]["ansible.task.host.name"] == "localhost"
         assert span["attributes"]["ansible.task.host.status"] == "ok"
         assert span["parent_id"] is not None
 
 
     @staticmethod
-    def assertGatheringFacts(span):
+    def assertGatheringFacts(span, service = 'ansible'):
         assert span["status"]["status_code"] == "OK"
-        Helpers.assertCommonSpan(span)
+        Helpers.assertCommonSpan(span, service)
 
 
     @staticmethod
-    def assertPlaybook(span):
+    def assertPlaybook(span, trace = None):
         assert span["kind"] == "SpanKind.SERVER"
         assert span["status"]["status_code"] == "OK"
-        assert span["parent_id"] is None
+        assert span["parent_id"] == trace
 
 
 @pytest.fixture
