@@ -5,17 +5,8 @@ def test_basic_playbook(helpers):
     """test a basic playbook"""
 
     playbook = "playbook.yml"
-    ## Given a playbook
-    with open(playbook, 'w', encoding="utf-8") as f:
-        f.write("""---
-- name: playbook
-  hosts: localhost
-  connection: local
-  tasks:
-    - name: hello world
-      debug:
-        msg: "hello world"
-""")
+    ## Given a basic playbook
+    helpers.create_basic_playbook(playbook)
 
     ## When running the ansible playbook with the plugin
     span_list = helpers.run_ansible_hide_arguments()

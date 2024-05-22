@@ -33,6 +33,20 @@ class Helpers:
 
 
     @staticmethod
+    def create_basic_playbook(playbook):
+        with open(playbook, 'w', encoding="utf-8") as f:
+            f.write("""---
+- name: playbook
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: hello world
+      debug:
+        msg: "hello world"
+""")
+
+
+    @staticmethod
     def get_spans():
         span_list = None
         with open("otel-output.json", encoding="utf-8") as input:
