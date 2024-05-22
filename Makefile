@@ -24,14 +24,26 @@ prepare-env:
 ## @help:run-test:Run the generated playbook.
 .PHONY: run-test
 run-test:
-	source $(VENV)/bin/activate; \
 	ansible-playbook playbook.yml
+
+## @help:unit:Run the tests.
+.PHONY: tests
+tests: unit its
 
 ## @help:unit:Run the unit tests.
 .PHONY: unit
 unit:
-	source $(VENV)/bin/activate; \
-	$(PYTHON) -m pytest --capture=no --junitxml $(JUNIT_OUTPUT) tests/unit/*.py
+	if [ -e "$(VENV)" ] ; then \
+		source $(VENV)/bin/activate ; \
+		$(PYTHON) -m pytest --capture=no --junitxml $(JUNIT_OUTPUT) tests/unit/*.py ; \
+	else \
+		$(PYTHON) -m pytest --capture=no --junitxml $(JUNIT_OUTPUT) tests/unit/*.py ; \
+	fi
+
+## @help:its:Run the its.
+.PHONY: its
+its:
+	@echo "TBD"
 
 ## @help:test-it:Run the generated playbook in ITs.
 .PHONY: test-it

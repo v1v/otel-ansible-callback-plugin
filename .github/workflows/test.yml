@@ -11,13 +11,16 @@ permissions:
   contents: read
 
 jobs:
-  test-anbile-playbook:
-    name: Run linting
+  test-ansible-playbook:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: 3.9
-      - name: test
-        run: make prepare-env unit
+
+      - name: requirements
+        run: pip3 install -r requirements.txt
+
+      - name: prepare
+        run: make prepare-env  tests
