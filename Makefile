@@ -14,6 +14,13 @@ virtualenv:
 	source $(VENV)/bin/activate;\
 	$(PIP) install -r requirements.txt;
 
+## @help:prepare-env:Download the opentelemetry playbook.
+.PHONY: prepare-env
+prepare-env:
+	mkdir -p plugins/callback_plugins
+	curl -s https://raw.githubusercontent.com/ansible-collections/community.general/main/plugins/callback/opentelemetry.py \
+		> plugins/callback_plugins/opentelemetry.py
+
 ## @help:run-test:Run the generated playbook.
 .PHONY: run-test
 run-test:
