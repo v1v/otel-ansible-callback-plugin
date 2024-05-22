@@ -32,7 +32,7 @@ run-test:
 .PHONY: unit
 unit:
 	source $(VENV)/bin/activate; \
-	$(PYTHON) -m pytest --capture=no --junitxml $(JUNIT_OUTPUT) test_pytest.py
+	$(PYTHON) -m pytest --capture=no --junitxml $(JUNIT_OUTPUT) tests/unit/*.py
 
 ## @help:test-it:Run the generated playbook in ITs.
 .PHONY: test-it
