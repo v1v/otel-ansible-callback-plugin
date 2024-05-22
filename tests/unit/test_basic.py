@@ -1,36 +1,7 @@
 import pytest
-import json
-import subprocess
 
 
-def get_spans():
-    span_list = None
-    with open("otel-output.json", encoding="utf-8") as input:
-        span_list = json.loads(input.read())['spans']
-    return span_list
-
-
-def assertCommonSpan(span):
-    assert span["kind"] == "SpanKind.INTERNAL"
-    assert span["resource"]["attributes"]["service.name"] == "ansible"
-    assert span["attributes"]["ansible.task.host.name"] == "localhost"
-    assert span["attributes"]["ansible.task.host.status"] == "ok"
-    assert span["parent_id"] is not None
-
-
-def assertGatheringFacts(span):
-    assert span["status"]["status_code"] == "OK"
-    assertCommonSpan(span)
-
-
-def assertPlaybook(span):
-    assert span["kind"] == "SpanKind.SERVER"
-    assert span["status"]["status_code"] == "OK"
-    assert span["parent_id"] is None
-    True
-
-
-def test_basic_playbook():
+def test_basic_playbook(helpers):
     """test a basic playbook"""
 
     playbook = "playbook.yml"
@@ -47,23 +18,22 @@ def test_basic_playbook():
 """)
 
     ## When running the ansible playbook with the plugin
-    p = subprocess.Popen('make run-test', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    retval = p.wait()
-    span_list = get_spans()
+    span_list = helpers.run_ansible()
     
     ## Then
     for span in span_list:
         if span["name"] == "Gathering Facts":
-            assertGatheringFacts(span)
+            helpers.assertGatheringFacts(span)
         if span["name"] == "hello world":
-            assertCommonSpan(span)
+            helpers.assertCommonSpan(span)
             assert span["attributes"]["ansible.task.module"] == "debug"
             assert len(span["events"]) == 1
         if span["name"] == playbook:
-            assertPlaybook(span)
+            helpers.assertPlaybook(span)
     assert len(span_list) == 3
 
-def test_playbook_with_long_output():
+
+def test_playbook_with_long_output(helpers):
     """test a basic playbook"""
 
     playbook = "playbook.yml"
@@ -81,52 +51,16 @@ def test_playbook_with_long_output():
 """)
 
     ## When running the ansible playbook with the plugin
-    p = subprocess.Popen('make run-test', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    retval = p.wait()
-    span_list = get_spans()
+    span_list = helpers.run_ansible()
 
     ## Then
     for span in span_list:
         if span["name"] == "Gathering Facts":
-            assertGatheringFacts(span)
+            helpers.assertGatheringFacts(span)
         if span["name"] == "Get build data":
-            assertCommonSpan(span)
+            helpers.assertCommonSpan(span)
             assert span["attributes"]["ansible.task.module"] == "ansible.builtin.uri"
             assert len(span["events"]) == 1
         if span["name"] == playbook:
-            assertPlaybook(span)
-    assert len(span_list) == 3
-
-
-def test_disabled_logs():
-    """test a basic playbook"""
-
-    playbook = "playbook.yml"
-    ## Given a playbook
-    with open(playbook, 'w', encoding="utf-8") as f:
-        f.write("""---
-- name: playbook
-  hosts: localhost
-  connection: local
-  tasks:
-    - name: hello world
-      debug:
-        msg: "hello world"
-""")
-
-    ## When running the ansible playbook with the plugin
-    p = subprocess.Popen('ANSIBLE_OPENTELEMETRY_DISABLE_LOGS=true make run-test', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    retval = p.wait()
-    span_list = get_spans()
-
-    ## Then
-    for span in span_list:
-        if span["name"] == "Gathering Facts":
-            assertGatheringFacts(span)
-        if span["name"] == "hello world":
-            assertCommonSpan(span)
-            assert span["attributes"]["ansible.task.module"] == "debug"
-            assert len(span["events"]) == 0
-        if span["name"] == playbook:
-            assertPlaybook(span)
+            helpers.assertPlaybook(span)
     assert len(span_list) == 3
