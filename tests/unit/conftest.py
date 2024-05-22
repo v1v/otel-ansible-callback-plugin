@@ -26,8 +26,8 @@ class Helpers:
     
 
     @staticmethod
-    def run_ansible_traceparent():
-        p = subprocess.Popen('TRACEPARENT=00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01 make run-test', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    def run_ansible_traceparent(traceparent):
+        p = subprocess.Popen(f"TRACEPARENT={traceparent} make run-test", shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         retval = p.wait()
         return Helpers.get_spans()
 
