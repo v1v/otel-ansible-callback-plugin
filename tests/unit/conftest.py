@@ -33,6 +33,13 @@ class Helpers:
 
 
     @staticmethod
+    def run_ansible_service(service):
+        p = subprocess.Popen(f"OTEL_SERVICE_NAME={service} make run-test", shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        retval = p.wait()
+        return Helpers.get_spans()
+
+
+    @staticmethod
     def create_basic_playbook(playbook):
         with open(playbook, 'w', encoding="utf-8") as f:
             f.write("""---
