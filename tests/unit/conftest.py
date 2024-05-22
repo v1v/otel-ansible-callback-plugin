@@ -4,39 +4,38 @@ import subprocess
 
 
 class Helpers:
+
     @staticmethod
-    def run_ansible():
-        p = subprocess.Popen('make run-test', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    def run(command):
+        output = "otel-output.json"
+        p = subprocess.Popen(f"ANSIBLE_OPENTELEMETRY_STORE_SPANS_IN_FILE={output} {command}", shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         retval = p.wait()
-        return Helpers.get_spans()
+        return Helpers.get_spans(output)
+
+
+    @staticmethod
+    def run_ansible(option = ""):
+        return Helpers.run(f"{option} make run-test")
 
 
     @staticmethod
     def run_ansible_no_logs():
-        p = subprocess.Popen('ANSIBLE_OPENTELEMETRY_DISABLE_ATTRIBUTES_IN_LOGS=true make run-test', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-        retval = p.wait()
-        return Helpers.get_spans()
+        return Helpers.run_ansible('ANSIBLE_OPENTELEMETRY_DISABLE_ATTRIBUTES_IN_LOGS=true')
 
 
     @staticmethod
     def run_ansible_hide_arguments():
-        p = subprocess.Popen('ANSIBLE_OPENTELEMETRY_HIDE_TASK_ARGUMENTS=true make run-test', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-        retval = p.wait()
-        return Helpers.get_spans()
+        return Helpers.run_ansible('ANSIBLE_OPENTELEMETRY_HIDE_TASK_ARGUMENTS=true')
     
 
     @staticmethod
     def run_ansible_traceparent(traceparent):
-        p = subprocess.Popen(f"TRACEPARENT={traceparent} make run-test", shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-        retval = p.wait()
-        return Helpers.get_spans()
+        return Helpers.run_ansible(f"TRACEPARENT={traceparent}")
 
 
     @staticmethod
     def run_ansible_service(service):
-        p = subprocess.Popen(f"OTEL_SERVICE_NAME={service} make run-test", shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-        retval = p.wait()
-        return Helpers.get_spans()
+        return Helpers.run_ansible(f"OTEL_SERVICE_NAME={service}")
 
 
     @staticmethod
@@ -54,9 +53,9 @@ class Helpers:
 
 
     @staticmethod
-    def get_spans():
+    def get_spans(output):
         span_list = None
-        with open("otel-output.json", encoding="utf-8") as input:
+        with open(output, encoding="utf-8") as input:
             span_list = json.loads(input.read())['spans']
         return span_list
 

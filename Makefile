@@ -25,7 +25,6 @@ prepare-env:
 .PHONY: run-test
 run-test:
 	source $(VENV)/bin/activate; \
-	ANSIBLE_OPENTELEMETRY_STORE_SPANS_IN_FILE=otel-output.json \
 	ansible-playbook playbook.yml
 
 ## @help:unit:Run the unit tests.
