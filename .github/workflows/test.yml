@@ -20,4 +20,4 @@ jobs:
         with:
           python-version: 3.9
       - name: test
-        run: make prepare unit
+        run: make prepare-env unit
