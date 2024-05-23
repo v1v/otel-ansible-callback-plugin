@@ -15,16 +15,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: 3.9
-          cache: 'pip'
 
-      - name: requirements
-        run: pip3 install -r requirements.txt
+      - name: Install environment
+        uses: ./.github/workflows/env-install
 
-      - name: prepare
-        run: make prepare-env tests
+      - name: Prepare
+        run: make prepare-env
+
+      - name: Tests
+        run: make tests
 
       - uses: actions/upload-artifact@v4
         if: success() || failure()
