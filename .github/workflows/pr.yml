@@ -31,7 +31,7 @@ jobs:
       - name: Prepare
         run: |
           mkdir -p plugins/callback_plugins
-          cp ${{ runner.temp }}/.community/changelogs/fragments/8430-fix-opentelemetry-when-using-logs-with-uri-tasks.yaml plugins/callback_plugins/opentelemetry.py
+          cp ${{ runner.temp }}/.community/plugins/callback/opentelemetry.py plugins/callback_plugins/opentelemetry.py
 
       - name: Tests
         run: make tests
