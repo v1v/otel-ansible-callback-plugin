@@ -1,5 +1,5 @@
 ---
-name: pr
+name: Test Ansible Community PRs
 
 on:
   workflow_dispatch:
@@ -34,7 +34,7 @@ jobs:
           cp ${{ runner.temp }}/.community/changelogs/fragments/8430-fix-opentelemetry-when-using-logs-with-uri-tasks.yaml plugins/callback_plugins/opentelemetry.py
 
       - name: Tests
-        run: checkout-pr ${{ inputs.pr }}
+        run: make tests
 
       - uses: actions/upload-artifact@v4
         if: success() || failure()
