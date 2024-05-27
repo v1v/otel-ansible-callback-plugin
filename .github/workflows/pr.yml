@@ -20,7 +20,9 @@ jobs:
           gh repo clone ansible-collections/community.general ${{ runner.temp }}/.community
           cd ${{ runner.temp }}/.community
           gh pr checkout ${{ inputs.pr }}
-      
+        env:
+          GH_TOKEN: ${{ github.token }}
+
       - uses: actions/checkout@v4
 
       - name: Install environment
