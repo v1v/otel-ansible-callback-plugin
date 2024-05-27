@@ -32,7 +32,6 @@ def test_playbook_with_long_output(helpers):
             assert len(span["events"]) == 1
             assert len(span["attributes"]["ansible.task.args.name"]) == 2
             assert len(span["attributes"]["ansible.task.args.value"]) == 2
-            print('....')
             assert "json" not in json.loads(span["events"][0]["name"])
         if span["name"] == playbook:
             helpers.assertPlaybook(span)
