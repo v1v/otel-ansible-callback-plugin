@@ -1,0 +1,41 @@
+---
+name: pr
+
+on:
+  workflow_dispatch:
+    inputs:
+      pr:
+        type: string
+        description: What Pull Request from https://github.com/ansible-collections/community.general
+
+permissions:
+  contents: read
+
+jobs:
+  test-ansible-playbook:
+    runs-on: ubuntu-latest
+    steps:
+
+      - run: |
+          gh repo clone ansible-collections/community.general ${{ runner.temp }}/.community
+          cd ${{ runner.temp }}/.community
+          gh pr checkout ${{ inputs.pr }}
+      
+      - uses: actions/checkout@v4
+
+      - name: Install environment
+        uses: ./.github/actions/setup-env
+
+      - name: Prepare
+        run: |
+          mkdir -p plugins/callback_plugins
+          cp ${{ runner.temp }}/.community/changelogs/fragments/8430-fix-opentelemetry-when-using-logs-with-uri-tasks.yaml plugins/callback_plugins/opentelemetry.py
+
+      - name: Tests
+        run: checkout-pr ${{ inputs.pr }}
+
+      - uses: actions/upload-artifact@v4
+        if: success() || failure()
+        with:
+          name: test-results
+          path: output/*.xml
