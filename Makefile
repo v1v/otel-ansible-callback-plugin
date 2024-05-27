@@ -3,6 +3,7 @@
 VENV ?= .venv
 PYTHON ?= python3
 PIP ?= pip3
+PR ?=
 
 JUNIT_OUTPUT := $(CURDIR)/output/junit-test_ansible_otel.xml
 
@@ -20,6 +21,15 @@ prepare-env:
 	mkdir -p plugins/callback_plugins
 	curl -s https://raw.githubusercontent.com/ansible-collections/community.general/main/plugins/callback/opentelemetry.py \
 		> plugins/callback_plugins/opentelemetry.py
+
+## @help:checkout-pr:Download the Given Pull Request from ansible-collections/community.general
+.PHONY: checkout-pr
+checkout-pr:
+	rm -rf /tmp/.community || true
+	gh repo clone ansible-collections/community.general /tmp/.community
+	cd /tmp/.community; \
+		gh pr checkout $(PR) --repo ansible-collections/community.general
+	cp /tmp/.community/plugins/callback/opentelemetry.py plugins/callback_plugins/opentelemetry.py
 
 ## @help:run-test:Run the generated playbook.
 .PHONY: run-test

@@ -15,23 +15,15 @@ jobs:
   test-ansible-playbook:
     runs-on: ubuntu-latest
     steps:
-
-      - run: |
-          gh repo clone ansible-collections/community.general ${{ runner.temp }}/.community
-          cd ${{ runner.temp }}/.community
-          gh pr checkout ${{ inputs.pr }}
-        env:
-          GH_TOKEN: ${{ github.token }}
-
       - uses: actions/checkout@v4
 
       - name: Install environment
         uses: ./.github/actions/setup-env
 
       - name: Prepare
-        run: |
-          mkdir -p plugins/callback_plugins
-          cp ${{ runner.temp }}/.community/plugins/callback/opentelemetry.py plugins/callback_plugins/opentelemetry.py
+        run: PR=${{ inputs.pr }} make checkout-pr
+        env:
+          GH_TOKEN: ${{ github.token }}
 
       - name: Tests
         run: make tests
