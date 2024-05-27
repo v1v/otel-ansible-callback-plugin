@@ -29,6 +29,7 @@ checkout-pr:
 	gh repo clone ansible-collections/community.general /tmp/.community
 	cd /tmp/.community; \
 		gh pr checkout $(PR) --repo ansible-collections/community.general
+	mkdir -p plugins/callback_plugins
 	cp /tmp/.community/plugins/callback/opentelemetry.py plugins/callback_plugins/opentelemetry.py
 
 ## @help:run-test:Run the generated playbook.
