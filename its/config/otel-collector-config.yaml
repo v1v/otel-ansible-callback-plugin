@@ -5,7 +5,7 @@ receivers:
       http:
 
 exporters:
-  logging:
+  debug:
 
   file:
     path: /etc/logs.txt
@@ -19,7 +19,7 @@ service:
   pipelines:
     traces:
       receivers: [otlp]
-      exporters: [logging, otlp/elastic, file]
+      exporters: [debug, otlp/elastic, file]
     logs:
       receivers: [otlp]
-      exporters: [logging, otlp/elastic, file]
+      exporters: [debug, otlp/elastic, file]
