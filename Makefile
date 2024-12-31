@@ -35,6 +35,7 @@ checkout-pr:
 ## @help:run-test:Run the generated playbook.
 .PHONY: run-test
 run-test:
+	source $(VENV)/bin/activate ; \
 	ansible-playbook playbook.yml
 
 ## @help:unit:Run the tests.
