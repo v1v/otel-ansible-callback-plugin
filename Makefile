@@ -64,3 +64,9 @@ test-it:
 	OTEL_EXPORTER_OTLP_INSECURE=true \
 	OTEL_EXPORTER_OTLP_ENDPOINT=localhost:4317 \
 	ansible-playbook playbook.yml
+
+.PHONY: info
+info:
+	source $(VENV)/bin/activate; \
+	ansible --version ; \
+	pip3 list
