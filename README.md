@@ -29,18 +29,17 @@ In a follow up
 
 ## Manual testing
 
-Pick the latest changes for the otel ansible plugin using  `make prepare-env`
+Pick the latest changes for the otel ansible plugin using  `make prepare-env`.
 
 ### Elastic vendor
 
-You can now create `its/.env` with the environment variables that are used in:
-- `its/docker-compose.yml`
-- `its/config/otel-collector-config.yaml`
+You can now create `manual/.env` with the environment variables that are used in:
+- `manual/docker-compose.yml`
+- `manual/config/otel-collector-config.yaml`
 
 ```bash
 $ make virtualenv
-$ make -C its start
-$ make test-it
+$ make test-manual
 ```
 
 You can now see traces in Kibana and `its/output/logs.txt`
