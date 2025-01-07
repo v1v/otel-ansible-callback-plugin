@@ -1,0 +1,25 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+      http:
+
+exporters:
+  debug:
+
+  file:
+    path: /etc/logs.txt
+
+  otlp/elastic:
+    endpoint: "${env:APM_URL}"
+    headers:
+      Authorization: "Bearer ${env:APM_TOKEN}"
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      exporters: [debug, otlp/elastic, file]
+    logs:
+      receivers: [otlp]
+      exporters: [debug, otlp/elastic, file]

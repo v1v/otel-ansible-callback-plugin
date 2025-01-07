@@ -35,6 +35,7 @@ checkout-pr:
 ## @help:run-test:Run the generated playbook.
 .PHONY: run-test
 run-test:
+	source $(VENV)/bin/activate ; \
 	ansible-playbook playbook.yml
 
 ## @help:unit:Run the tests.
@@ -56,10 +57,17 @@ unit:
 its:
 	@echo "TBD"
 
-## @help:test-it:Run the generated playbook in ITs.
-.PHONY: test-it
-test-it:
+## @help:test-it:Run the generated playbook.
+.PHONY: test-manual
+test-manual:
 	source $(VENV)/bin/activate; \
+	$(MAKE) -C manual start; \
 	OTEL_EXPORTER_OTLP_INSECURE=true \
 	OTEL_EXPORTER_OTLP_ENDPOINT=localhost:4317 \
 	ansible-playbook playbook.yml
+
+.PHONY: info
+info:
+	source $(VENV)/bin/activate; \
+	ansible --version ; \
+	pip3 list
